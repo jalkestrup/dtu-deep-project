@@ -12,6 +12,7 @@ from itertools import islice
 import numpy as np
 import seb
 from seb.interfaces.task import Task
+import pickle
 import os
 from dotenv import load_dotenv
 from huggingface_hub import login
@@ -195,7 +196,12 @@ def run_benchmark():
     models = [seb.get_model(model_name)]
     benchmark = seb.Benchmark(languages=['da'])
     results = benchmark.evaluate_models(models=models)
-    print(results)
+    #Save pickle
+    with open(f"SEB_L2V_eval_{model_name}.pkl", 'wb') as f:
+        pickle.dump(results, f)
+    avg_score = np.mean([res.get_main_score() for res in results])
+    print(f'\nAverage results: {avg_score}')
+    print(f'\nFull Results:\n{results}')
 
 if __name__ == "__main__":
     run_benchmark()
