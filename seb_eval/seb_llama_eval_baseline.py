@@ -104,7 +104,9 @@ class E5Instruct(Encoder):
         self.tokenizer = AutoTokenizer.from_pretrained(model_name)
         if self.tokenizer.pad_token is None:
             self.tokenizer.pad_token = self.tokenizer.eos_token
+        device = "cuda:0" if torch.cuda.is_available() else "cpu" # Edit 1, added
         self.model = AutoModel.from_pretrained(model_name, **kwargs)
+        self.model.to(device) #Edit 1, added
         self.max_length = max_length
         self.max_batch_size = max_batch_size
 
@@ -149,9 +151,10 @@ class E5Instruct(Encoder):
         for batch in tqdm(batched(sentences, batch_size)):
             with torch.inference_mode():
                 batch_dict = self.preprocess(batch, instruction=instruction, encode_type=encode_type)
+                batch_dict = batch_to_device(batch_dict, device) #Edit 2, added
                 outputs = self.model(**batch_dict)
                 embeddings = self.get_embedding_from_output(outputs, batch_dict)
-            batched_embeddings.append(embeddings.detach().cpu())
+            batched_embeddings.append(embeddings.detach()) #Edit 3, removed cpu part of (embeddings.detach().cpu())
 
         return torch.cat(batched_embeddings).to("cpu").detach().numpy()
 
@@ -172,7 +175,7 @@ class E5Instruct(Encoder):
 
 class Llama8BInstruct(E5Instruct):
     def __init__(self):
-        super().__init__("meta-llama/Meta-Llama-3-8B-Instruct", max_length=512, max_batch_size=32, torch_dtype=torch.float16)
+        super().__init__("AI-Sweden-Models/Llama-3-8B-instruct", max_length=512, max_batch_size=32, torch_dtype=torch.float16)
 
     @staticmethod
     def last_token_pool(last_hidden_states: Tensor, attention_mask: Tensor) -> Tensor:
@@ -209,9 +212,9 @@ class Llama8BInstruct(E5Instruct):
         return batch_dict.to(self.model.device)
 
 
-@models.register("llama-8b-instruct")
+@models.register("llama-8b-swe-instruct")
 def create_multilingual_e5_mistral_7b_instruct() -> SebModel:
-    hf_name = "meta-llama/Meta-Llama-3-8B-Instruct"
+    hf_name = "AI-Sweden-Models/Llama-3-8B-instruct"
     meta = ModelMeta(
         name=hf_name.split("/")[-1],
         huggingface_name=hf_name,
@@ -227,7 +230,7 @@ def create_multilingual_e5_mistral_7b_instruct() -> SebModel:
         meta=meta,
     )
 
-model_name = "llama-8b-instruct"
+model_name = "llama-8b-swe-instruct"
 def run_benchmark():
     models = [seb.get_model(model_name)]
     benchmark = seb.Benchmark(languages=['da'])
