@@ -1,120 +1,0 @@
-nohup: ignoring input
-Running Benchmark:   0%|          | 0/1 [00:00<?, ?it/s]Running Llama-3-8B-instruct:   0%|          | 0/1 [00:00<?, ?it/s]
-Running Llama-3-8B-instruct:   0%|          | 0/12 [00:00<?, ?it/s][A
-Running Llama-3-8B-instruct on Angry Tweets:   0%|          | 0/12 [00:00<?, ?it/s][A/home/lenovo/alkestrup/venv/lib/python3.10/site-packages/huggingface_hub/file_download.py:797: FutureWarning: `resume_download` is deprecated and will be removed in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
-  warnings.warn(
-Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
-
-
-Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s][A[A
-
-Loading checkpoint shards:  25%|██▌       | 1/4 [00:03<00:09,  3.24s/it][A[A
-
-Loading checkpoint shards:  50%|█████     | 2/4 [00:06<00:06,  3.26s/it][A[A
-
-Loading checkpoint shards:  75%|███████▌  | 3/4 [00:09<00:03,  3.24s/it][A[A
-
-Loading checkpoint shards: 100%|██████████| 4/4 [00:09<00:00,  2.05s/it][A[ALoading checkpoint shards: 100%|██████████| 4/4 [00:09<00:00,  2.49s/it]
-
-
-0it [00:00, ?it/s][A[AYou're using a PreTrainedTokenizerFast tokenizer. Please note that with a fast tokenizer, using the `__call__` method is faster than using a method to encode the text followed by a call to the `pad` method to get a padded encoding.
-
-
-1it [00:52, 52.31s/it][A[A
-
-2it [01:12, 33.63s/it][A[A2it [01:12, 36.43s/it]
-
-
-0it [00:00, ?it/s][A[A
-
-1it [00:39, 39.12s/it][A[A
-
-2it [01:20, 40.68s/it][A[A
-
-3it [02:06, 43.06s/it][A[A
-
-4it [02:50, 43.15s/it][A[A
-
-5it [03:34, 43.72s/it][A[A
-
-6it [04:19, 43.90s/it][A[A
-
-7it [05:11, 46.81s/it][A[A
-
-8it [05:57, 46.37s/it][A[A
-
-9it [06:39, 45.00s/it][A[A
-
-10it [07:24, 45.08s/it][A[A
-
-11it [08:13, 46.36s/it][A[A
-
-12it [09:13, 50.43s/it][A[A
-
-13it [10:00, 49.32s/it][A[A
-
-14it [10:45, 48.09s/it][A[A
-
-15it [11:27, 46.20s/it][A[A
-
-16it [12:33, 52.07s/it][A[A
-
-17it [13:20, 50.58s/it][A[A
-
-18it [14:00, 47.42s/it][A[A
-
-19it [14:47, 47.24s/it][A[A
-
-20it [15:32, 46.64s/it][A[A
-
-21it [16:15, 45.46s/it][A[A
-
-22it [17:02, 45.95s/it][A[A
-
-23it [17:47, 45.90s/it][A[A
-
-24it [18:41, 48.34s/it][A[A
-
-25it [19:30, 48.32s/it][A[A
-
-26it [20:18, 48.19s/it][A[A
-
-27it [21:05, 48.07s/it][A[A
-
-28it [21:52, 47.59s/it][A[A
-
-29it [22:49, 50.47s/it][A[A
-
-30it [23:33, 48.59s/it][A[A
-
-31it [24:32, 51.68s/it][A[A
-
-32it [25:18, 49.98s/it][A[A
-
-33it [25:54, 45.66s/it][A[A33it [25:54, 47.10s/it]
-
-
-0it [00:00, ?it/s][A[A
-
-1it [00:54, 54.94s/it][A[A
-
-2it [01:15, 34.82s/it][A[A2it [01:15, 37.84s/it]
-
-
-0it [00:00, ?it/s][A[A
-
-1it [00:53, 53.43s/it][A[A
-
-2it [01:13, 33.62s/it][A[A2it [01:13, 36.59s/it]
-
-
-0it [00:00, ?it/s][A[A
-
-1it [00:44, 44.47s/it][A[A
-
-2it [01:05, 30.90s/it][A[A2it [01:05, 32.94s/it]
-
-
-0it [00:00, ?it/s][A[A
-
-1it [00:43, 43.72s/it][A[A

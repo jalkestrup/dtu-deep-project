@@ -35,15 +35,21 @@ else:
 
 # ----------- Define LLM models ------------
 
-#hf_mntp_model = 'jealk/llm2vec-da-mntp'
-#hf_simcse_model = 'jealk/llm2vec-da-simcse'
-hf_mntp_model = "McGill-NLP/LLM2Vec-Meta-Llama-3-8B-Instruct-mntp"
-hf_simcse_model = "McGill-NLP/LLM2Vec-Meta-Llama-3-8B-Instruct-mntp-unsup-simcse"
+hf_mntp_model = 'jealk/llm2vec-da-mntp'
+hf_simcse_model = 'jealk/llm2vec-da-supervised'
+#hf_mntp_model = "McGill-NLP/LLM2Vec-Meta-Llama-3-8B-Instruct-mntp"
+#hf_simcse_model = "McGill-NLP/LLM2Vec-Meta-Llama-3-8B-Instruct-mntp-unsup-simcse"
+hf_simcse_revision = ""
+
+# Model name to save in SEB and local pkl {original model name}-{model type [instruct, llm2vec]}-{ft type}-{ft dataset}-{ft steps}
+seb_model_name = 'llama-8b-swe-llm2vec-supervised-500-steps_full'
+
 # ----------- Loading the llm2vec model according to repo -----------
 
 # Load base mistral model with custom code
 tokenizer = AutoTokenizer.from_pretrained(hf_mntp_model)
 config = AutoConfig.from_pretrained(hf_mntp_model, trust_remote_code=True)
+
 model = AutoModel.from_pretrained(
     hf_mntp_model,
     config=config,
@@ -58,8 +64,11 @@ model = PeftModel.from_pretrained(model, hf_mntp_model)
 # Merge and unload
 model = model.merge_and_unload()
 
-# Load supervised model
-model = PeftModel.from_pretrained(model, hf_simcse_model)
+#Check if hf_simcse_revision is defined in this script
+if hf_simcse_revision:
+    model = PeftModel.from_pretrained(model, hf_simcse_model, revision=hf_simcse_revision)
+else:
+    model = PeftModel.from_pretrained(model, hf_simcse_model)
 
 # Create a wrapper instance for encoding and pooling operations
 l2v = LLM2Vec(model, tokenizer, pooling_mode="mean", max_length=512)
@@ -171,16 +180,14 @@ class SEB_L2V(seb.Encoder):
         return torch.cat(batched_embeddings).numpy()
 
 # Register the Model with SEB
-# Split hf_simcse_model at / take the second half
 
-model_name = hf_simcse_model.split("/")[-1]
+#model_name = hf_simcse_model.split("/")[-1]
 
-@seb.models.register(model_name)
+@seb.models.register(seb_model_name)
 def create_my_model() -> seb.SebModel:
-    hf_name = model_name
     meta = seb.ModelMeta(
-        name=hf_name.split("/")[-1],
-        huggingface_name=hf_name,
+        name=seb_model_name,
+        huggingface_name=hf_simcse_model,
         reference=f"https://huggingface.co/{hf_simcse_model}",
         languages=['da'],
         embedding_size=4096,
@@ -193,11 +200,11 @@ def create_my_model() -> seb.SebModel:
 # ----------- Running the Benchmark -----------
 
 def run_benchmark():
-    models = [seb.get_model(model_name)]
-    benchmark = seb.Benchmark(languages=['da'])
-    results = benchmark.evaluate_models(models=models)
+    models = [seb.get_model(seb_model_name)]
+    benchmark = seb.Benchmark()
+    results = benchmark.evaluate_models(models=models, use_cache=False)
     #Save pickle
-    with open(f"SEB_L2V_eval_{model_name}.pkl", 'wb') as f:
+    with open(f"SEB_eval_{seb_model_name}.pkl", 'wb') as f:
         pickle.dump(results, f)
     avg_score = np.mean([res.get_main_score() for res in results])
     print(f'\nAverage results: {avg_score}')
