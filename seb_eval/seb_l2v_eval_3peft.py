@@ -32,19 +32,15 @@ if hf_token:
 else:
     raise ValueError("Hugging Face token not found. Please ensure it's set in the .env file.")
 
-
 # ----------- Define LLM models ------------
 
-hf_mntp_model = '../../llm2vec/output/mntp/Meta-Llama-3-sweden-8B-Instruct-scandi-ft/checkpoint-1000'
-#hf_simcse_model = 'jealk/llm2vec-da-simcse'
-hf_simcse_model = '../../llm2vec/output/mntp-simcse/Meta-Llama-3-8B-swe-Instruct-scandi-simcse-1000-steps/checkpoint-1000'
-
-#hf_mntp_model = "McGill-NLP/LLM2Vec-Meta-Llama-3-8B-Instruct-mntp"
-#hf_simcse_model = "McGill-NLP/LLM2Vec-Meta-Llama-3-8B-Instruct-mntp-unsup-simcse"
+hf_mntp_model = 'jealk/llm2vec-scandi-mntp'
+hf_simcse_model = 'jealk/llm2vec-scandi-simcse'
+hf_simcse_da_model = 'jealk/llm2vec-da-simcse'  # Third PEFT layer
 hf_simcse_revision = ""
 
 # Model name to save in SEB and local pkl {original model name}-{model type [instruct, llm2vec]}-{ft type}-{ft dataset}-{ft steps}
-seb_model_name = 'llama-8b-swe-llm2vec-mntp-scandiwiki-simcse-scandiwiki-1000-steps'
+seb_model_name = 'llama-8b-swe-llm2vec-simcse-scandidk-wiki-2000-steps'
 
 # ----------- Loading the llm2vec model according to repo -----------
 
@@ -63,14 +59,23 @@ model = AutoModel.from_pretrained(
 # Load MNTP LoRA weights
 model = PeftModel.from_pretrained(model, hf_mntp_model)
 
-# Merge and unload
+# Merge and unload the first PEFT layer
 model = model.merge_and_unload()
 
-#Check if hf_simcse_revision is defined in this script
+# Load SimCSE PEFT weights
 if hf_simcse_revision:
     model = PeftModel.from_pretrained(model, hf_simcse_model, revision=hf_simcse_revision)
 else:
     model = PeftModel.from_pretrained(model, hf_simcse_model)
+
+# Optional: merge and unload the second PEFT layer if needed
+model = model.merge_and_unload()
+
+# Load DA-SimCSE PEFT weights as the third layer
+model = PeftModel.from_pretrained(model, hf_simcse_da_model)
+
+# Merge and Unload the third PEFT layer
+model = model.merge_and_unload()
 
 # Create a wrapper instance for encoding and pooling operations
 l2v = LLM2Vec(model, tokenizer, pooling_mode="mean", max_length=512)

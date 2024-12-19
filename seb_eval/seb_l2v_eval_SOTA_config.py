@@ -35,16 +35,12 @@ else:
 
 # ----------- Define LLM models ------------
 
-hf_mntp_model = '../../llm2vec/output/mntp/Meta-Llama-3-sweden-8B-Instruct-scandi-ft/checkpoint-1000'
-#hf_simcse_model = 'jealk/llm2vec-da-simcse'
-hf_simcse_model = '../../llm2vec/output/mntp-simcse/Meta-Llama-3-8B-swe-Instruct-scandi-simcse-1000-steps/checkpoint-1000'
-
-#hf_mntp_model = "McGill-NLP/LLM2Vec-Meta-Llama-3-8B-Instruct-mntp"
-#hf_simcse_model = "McGill-NLP/LLM2Vec-Meta-Llama-3-8B-Instruct-mntp-unsup-simcse"
+hf_mntp_model = 'jealk/llm2vec-da-mntp'
+hf_simcse_model = 'jealk/TTC-unsupervised-1'
 hf_simcse_revision = ""
 
 # Model name to save in SEB and local pkl {original model name}-{model type [instruct, llm2vec]}-{ft type}-{ft dataset}-{ft steps}
-seb_model_name = 'llama-8b-swe-llm2vec-mntp-scandiwiki-simcse-scandiwiki-1000-steps'
+seb_model_name = 'llama-8b-swe-llm2vec-mntp-dkwiki-simcse-scandiwiki-1000-steps'
 
 # ----------- Loading the llm2vec model according to repo -----------
 
@@ -181,9 +177,6 @@ class SEB_L2V(seb.Encoder):
 
         return torch.cat(batched_embeddings).numpy()
 
-# Register the Model with SEB
-
-#model_name = hf_simcse_model.split("/")[-1]
 
 @seb.models.register(seb_model_name)
 def create_my_model() -> seb.SebModel:
